@@ -7,13 +7,11 @@ import java.io.IOException;
 public class RandomAccessBankAccount extends BankAccount {
 	public static final int SIZE = 140;
 	
-	public RandomAccessBankAccount(){
-		this(0, "", "", "", "", 0.0, 0.0);
-	}
+	public RandomAccessBankAccount(){ }
 	
-	public RandomAccessBankAccount(int accountID, String accountNumber, String firstName, String surname, String accountType,
+	public RandomAccessBankAccount(String accountNumber, String firstName, String surname, String accountType,
 			double balance, double overdraft){
-		super(accountID, accountNumber, firstName, surname, accountType, balance, overdraft);
+		super(accountNumber, firstName, surname, accountType, balance, overdraft);
 	}
 	
 	public void read(RandomAccessFile file) throws IOException{

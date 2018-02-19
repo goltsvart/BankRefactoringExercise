@@ -29,9 +29,9 @@ public class CreateBankDialog extends JFrame {
 	ArrayList<BankAccount> accountList;
 
 	HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
-	
-	
-	
+
+
+
 	
 	public void put(int key, BankAccount value){
 		int hash = (key%TABLE_SIZE);
@@ -159,19 +159,8 @@ public class CreateBankDialog extends JFrame {
 		
 				if (accountNumber != null && accountNumber.length()==8 && surname != null && firstName != null && accountType != null) {
 					try {
-						
-						boolean idTaken = false;
+
 						boolean accNumTaken=false;
-							
-							int randNumber = rand.nextInt(24) + 1;
-						
-						 for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-							 
-							 while(randNumber == entry.getValue().getAccountID()){
-								 idTaken = true;
-								 randNumber = rand.nextInt(24)+1;
-							 }		 
-						 }
 					 
 							for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {					
 								 if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
@@ -183,7 +172,7 @@ public class CreateBankDialog extends JFrame {
 						if(!accNumTaken){
 						
 						
-							BankAccount account = new BankAccount(randNumber, accountNumber, surname, firstName, accountType, 0.0, 0.0);
+							BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
 						
 							
 							int key = Integer.parseInt(account.getAccountNumber());
