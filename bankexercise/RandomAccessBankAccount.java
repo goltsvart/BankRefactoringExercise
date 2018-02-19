@@ -1,11 +1,9 @@
 package bankexercise;
 
-
 import java.io.RandomAccessFile;
 import java.io.IOException;
 
 public class RandomAccessBankAccount extends BankAccount {
-	public static final int SIZE = 140;
 	
 	public RandomAccessBankAccount(){ }
 	
@@ -30,7 +28,6 @@ public class RandomAccessBankAccount extends BankAccount {
 			temp = file.readChar();
 			name[count] = temp;
 		}
-		
 		return new String(name).replace('\0', ' ');
 	}
 	
@@ -51,9 +48,7 @@ public class RandomAccessBankAccount extends BankAccount {
 			buffer = new StringBuffer(name);
 		else
 			buffer = new StringBuffer(15);
-		
 		buffer.setLength(15);
 		file.writeChars(buffer.toString());
 	}
-			
 }

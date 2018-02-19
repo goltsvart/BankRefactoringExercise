@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,12 +32,9 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 public class BankApplication extends JFrame {
-	
-	ArrayList<BankAccount> accountList = new ArrayList<BankAccount>();
+
 	static HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
 	private final static int TABLE_SIZE = 29;
-	static private final String newline = "\n";
-	
 	JMenuBar menuBar;
 	JMenu navigateMenu, recordsMenu, transactionsMenu, fileMenu, exitMenu;
 	JMenuItem nextItem, prevItem, firstItem, lastItem, findByAccount, findBySurname, listAll;
@@ -54,15 +50,12 @@ public class BankApplication extends JFrame {
 	double interestRate;
 	
 	int currentItem = 0;
-	
-	
+
 	boolean openValues;
 	
 	public BankApplication() {
 		
 		super("Bank Application");
-		
-		int currentItem;
 		initComponents();
 	}
 	
@@ -124,7 +117,7 @@ public class BankApplication extends JFrame {
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
 
 		nextItemButton = new JButton(new ImageIcon("next.png"));
-		prevItemButton = new JButton(new ImageIcon("previous.png"));
+		prevItemButton = new JButton(new ImageIcon("prev.png"));
 		firstItemButton = new JButton(new ImageIcon("first.png"));
 		lastItemButton = new JButton(new ImageIcon("last.png"));
 		
@@ -233,22 +226,7 @@ public class BankApplication extends JFrame {
 				displayDetails(currentItem);
 			}
 		};
-		
-		ActionListener next = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				saveOpenValues();
-				// No next if at end of list.
-				if (currentItem != (table.size()-1)) {
-					// Move to next item.
-						currentItem++;
-					while(!table.containsKey(currentItem) ){
-						currentItem++;
-					}
-					displayDetails(currentItem);			
-				}				
-			}
-		};
-		
+
 		ActionListener next1 = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				
@@ -274,8 +252,6 @@ public class BankApplication extends JFrame {
 					displayDetails(currentItem);			
 			}
 		};
-		
-		
 
 		ActionListener prev = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -311,9 +287,7 @@ public class BankApplication extends JFrame {
 								
 				while(!table.containsKey(currentItem)){
 					currentItem--;
-					
 				}
-				
 				displayDetails(currentItem);
 			}
 		};
@@ -342,7 +316,6 @@ public class BankApplication extends JFrame {
 								currentItem++;
 							}
 							displayDetails(currentItem);
-							
 			}
 		});
 		
@@ -351,8 +324,7 @@ public class BankApplication extends JFrame {
 				new CreateBankDialog(table);		
 			}
 		});
-		
-		
+
 		modifyItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				surnameTextField.setEditable(true);
@@ -368,7 +340,6 @@ public class BankApplication extends JFrame {
 				 String interestRateStr = JOptionPane.showInputDialog("Enter Interest Rate: (do not type the % sign)");
 				 if(interestRateStr!=null)
 					 interestRate = Double.parseDouble(interestRateStr);
-			
 			}
 		});
 		
@@ -387,8 +358,7 @@ public class BankApplication extends JFrame {
 				jTable.setAutoCreateRowSorter(true);
 				
 				for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-				   
-				    
+
 				    Object[] objs = {entry.getValue().getAccountID(), entry.getValue().getAccountNumber(), 
 				    				entry.getValue().getFirstName().trim() + " " + entry.getValue().getSurname().trim(), 
 				    				entry.getValue().getAccountType(), entry.getValue().getBalance(), 
@@ -436,11 +406,7 @@ public class BankApplication extends JFrame {
 				}
 				else if(answer == JOptionPane.NO_OPTION)
 					dispose();
-				else if(answer==0)
-					;
-				
-				
-				
+				else if(answer==0) ;
 			}
 		});	
 		
@@ -588,17 +554,12 @@ public class BankApplication extends JFrame {
 			overdraftTextField.setText(table.get(currentItem).getOverdraft()+"");
 		else
 			overdraftTextField.setText("Only applies to current accs");
-	
 	}
 	
 	private static RandomAccessFile input;
 	private static RandomAccessFile output;
-	private static final int NUMBER_RECORDS = 100;
-
 	
-	public static void openFileRead()
-	   {
-		
+	public static void openFileRead(){
 		table.clear();
 			
 		fc = new JFileChooser();
@@ -625,8 +586,7 @@ public class BankApplication extends JFrame {
 	
 	static String fileToSaveAs = "";
 	
-	public static void openFileWrite()
-	   {
+	public static void openFileWrite(){
 		if(fileToSaveAs!=""){
 	      try // open file
 	      {
@@ -642,9 +602,7 @@ public class BankApplication extends JFrame {
 			saveToFileAs();
 	   }
 	
-	public static void saveToFileAs()
-	   {
-		
+	public static void saveToFileAs() {
 		fc = new JFileChooser();
 		
 		 int returnVal = fc.showSaveDialog(null);
@@ -656,8 +614,6 @@ public class BankApplication extends JFrame {
          } else {
              JOptionPane.showMessageDialog(null, "Save cancelled by user");
          }
-        
-     	    
 	         try {
 	        	 if(fc.getSelectedFile()==null){
 	        		 JOptionPane.showMessageDialog(null, "Cancelled");
@@ -668,9 +624,6 @@ public class BankApplication extends JFrame {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	      
-	      
-	     
 	   }
 	
 	public static void closeFile() 
@@ -682,18 +635,13 @@ public class BankApplication extends JFrame {
 	      } // end try
 	      catch ( IOException ioException )
 	      {
-	         
 	    	  JOptionPane.showMessageDialog(null, "Error closing file.");//System.exit( 1 );
 	      } // end catch
 	   } // end method closeFile
 	
 	public static void readRecords()
 	   {
-	
 	      RandomAccessBankAccount record = new RandomAccessBankAccount();
-
-	      
-
 	      try // read a record and display
 	      {
 	         while ( true )
@@ -704,25 +652,17 @@ public class BankApplication extends JFrame {
 	            		record.read( input );
 	            } while ( record.getAccountID() == 0 );
 
-	       
-	            
 	            BankAccount ba = new BankAccount(record.getAccountNumber(), record.getFirstName(),
 	                    record.getSurname(), record.getAccountType(), record.getBalance(), record.getOverdraft());
-	            
-	            
 	            Integer key = Integer.valueOf(ba.getAccountNumber().trim());
-			
 				int hash = (key%TABLE_SIZE);
-		
-				
+
 				while(table.containsKey(hash)){
 			
 					hash = hash+1;
 				}
 				
 	            table.put(hash, ba);
-		
-
 	         } // end while
 	      } // end try
 	      catch ( EOFException eofException ) // close file
@@ -737,13 +677,9 @@ public class BankApplication extends JFrame {
 	   }
 	
 public static void saveToFile(){
-		
-	
-		RandomAccessBankAccount record = new RandomAccessBankAccount();
-	
-	      Scanner input = new Scanner( System.in );
 
-	      
+		RandomAccessBankAccount record = new RandomAccessBankAccount();
+
 	      for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
 			   record.setAccountID(entry.getValue().getAccountID());
 			   record.setAccountNumber(entry.getValue().getAccountNumber());
@@ -752,9 +688,7 @@ public static void saveToFile(){
 			   record.setAccountType(entry.getValue().getAccountType());
 			   record.setBalance(entry.getValue().getBalance());
 			   record.setOverdraft(entry.getValue().getOverdraft());
-			   
 			   if(output!=null){
-			   
 			      try {
 						record.write( output );
 					} catch (IOException u) {
@@ -763,14 +697,11 @@ public static void saveToFile(){
 			   }
 			   
 			}
-    	  
-	      
 	}
 
 	public static void writeFile(){
 		openFileWrite();
 		saveToFile();
-		//addRecords();
 		closeFile();
 	}
 	
@@ -788,27 +719,19 @@ public static void saveToFile(){
 	
 	public void put(int key, BankAccount value){
 		int hash = (key%TABLE_SIZE);
-	
 		while(table.containsKey(key)){
 			hash = hash+1;
-		
 		}
 		table.put(hash, value);
 
 	}
-	
 	public static void main(String[] args) {
 		BankApplication ba = new BankApplication();
 		ba.setSize(1200,400);
 		ba.pack();
 		ba.setVisible(true);
 	}
-	
-	
 }
-
-
-
 
 /*
 The task for your second assignment is to construct a system that will allow users to define a data structure representing a collection of records that can be displayed both by means of a dialog that can be scrolled through and by means of a table to give an overall view of the collection contents. 

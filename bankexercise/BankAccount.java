@@ -83,5 +83,4 @@ public class BankAccount {
 	public String toString(){
 		return "\nAccount id: " + accountID +  "Account Num: " + accountNumber + "\nName: " + surname + " " + firstName+"\n";
 	}
-
 }
