@@ -419,14 +419,8 @@ public class BankApplication extends JFrame {
 				 for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
 					   
 					 if(sName.equalsIgnoreCase((entry.getValue().getSurname().trim()))){
-						 found = true;
-						 accountIDTextField.setText(entry.getValue().getAccountID()+"");
-						 accountNumberTextField.setText(entry.getValue().getAccountNumber());
-						 surnameTextField.setText(entry.getValue().getSurname());
-						 firstNameTextField.setText(entry.getValue().getFirstName());
-						 accountTypeTextField.setText(entry.getValue().getAccountType());
-						 balanceTextField.setText(entry.getValue().getBalance()+"");
-						 overdraftTextField.setText(entry.getValue().getOverdraft()+"");
+					 	 found = true;
+						 setTextToFields(entry);
 					 }
 				 }		
 				 if(found)
@@ -443,17 +437,10 @@ public class BankApplication extends JFrame {
 				boolean found = false;
 			
 				 for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-					   
+
 					 if(accNum.equals(entry.getValue().getAccountNumber().trim())){
 						 found = true;
-						 accountIDTextField.setText(entry.getValue().getAccountID()+"");
-						 accountNumberTextField.setText(entry.getValue().getAccountNumber());
-						 surnameTextField.setText(entry.getValue().getSurname());
-						 firstNameTextField.setText(entry.getValue().getFirstName());
-						 accountTypeTextField.setText(entry.getValue().getAccountType());
-						 balanceTextField.setText(entry.getValue().getBalance()+"");
-						 overdraftTextField.setText(entry.getValue().getOverdraft()+"");						
-						 
+						 setTextToFields(entry);
 					 }			 
 				 }
 				 if(found)
@@ -531,7 +518,16 @@ public class BankApplication extends JFrame {
 			}
 		});		
 	}
-	
+	public void setTextToFields(Map.Entry<Integer, BankAccount> entry){
+		accountIDTextField.setText(entry.getValue().getAccountID()+"");
+		accountNumberTextField.setText(entry.getValue().getAccountNumber());
+		surnameTextField.setText(entry.getValue().getSurname());
+		firstNameTextField.setText(entry.getValue().getFirstName());
+		accountTypeTextField.setText(entry.getValue().getAccountType());
+		balanceTextField.setText(entry.getValue().getBalance()+"");
+		overdraftTextField.setText(entry.getValue().getOverdraft()+"");
+	}
+
 	public void saveOpenValues(){		
 		if (openValues){
 			surnameTextField.setEditable(false);
