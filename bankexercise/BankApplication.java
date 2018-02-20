@@ -212,71 +212,31 @@ public class BankApplication extends JFrame {
         });
 	
 		ActionListener first = e -> {
-
             saveOpenValues();
-
-            currentItem=0;
-            while(!table.containsKey(currentItem)){
-                currentItem++;
-            }
-            displayDetails(currentItem);
+			currentItem = 1;
+			displayDetails(currentItem);
         };
 
 		ActionListener next1 = e -> {
-            ArrayList<Integer> keyList = new ArrayList<Integer>();
-            int i=0;
-
-            while(i<TABLE_SIZE){
-                i++;
-                if(table.containsKey(i))
-                    keyList.add(i);
-            }
-
-            int maxKey = Collections.max(keyList);
-
-            saveOpenValues();
-
-                if(currentItem<maxKey){
-                    currentItem++;
-                    while(!table.containsKey(currentItem)){
-                        currentItem++;
-                    }
-                }
-                displayDetails(currentItem);
+			if (currentItem != table.size()) {
+				saveOpenValues();
+				currentItem++;
+				displayDetails(currentItem);
+			}
         };
 
 		ActionListener prev = e -> {
-            ArrayList<Integer> keyList = new ArrayList<Integer>();
-            int i=0;
-
-            while(i<TABLE_SIZE){
-                i++;
-                if(table.containsKey(i))
-                    keyList.add(i);
-            }
-
-            int minKey = Collections.min(keyList);
-            //System.out.println(minKey);
-
-            if(currentItem>minKey){
-                currentItem--;
-                while(!table.containsKey(currentItem)){
-                    //System.out.println("Current: " + currentItem + ", min key: " + minKey);
-                    currentItem--;
-                }
-            }
-            displayDetails(currentItem);
+			if (currentItem != 1) {
+				saveOpenValues();
+				currentItem--;
+				displayDetails(currentItem);
+			}
         };
 	
 		ActionListener last = e -> {
             saveOpenValues();
-
-            currentItem =29;
-
-            while(!table.containsKey(currentItem)){
-                currentItem--;
-            }
-            displayDetails(currentItem);
+			currentItem = table.size();
+			displayDetails(currentItem);
         };
 		
 		nextItemButton.addActionListener(next1);
@@ -295,8 +255,6 @@ public class BankApplication extends JFrame {
 
                         table.remove(currentItem);
                         JOptionPane.showMessageDialog(null, "Account Deleted");
-
-
                         currentItem=0;
                         while(!table.containsKey(currentItem)){
                             currentItem++;

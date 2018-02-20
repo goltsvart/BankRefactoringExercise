@@ -40,24 +40,13 @@ public class CreateBankDialog extends JFrame {
 		}
 		if(!accNumTaken){
 			BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
-			addAccountToTable(account);
+			table.put(account.getAccountID(), account);
 		}else{
 			JOptionPane.showMessageDialog(null, "Account Number must be unique");
 		}
 	}
 
-	public void addAccountToTable(BankAccount account){
-		int key = Integer.parseInt(account.getAccountNumber());
-
-		int hash = (key%TABLE_SIZE);
-
-		while(table.containsKey(hash)){
-			hash = hash+1;
-		}
-		table.put(hash, account);
-	}
 	// Constructor code based on that for the Create and Edit dialog classes in the Shapes exercise.
-
 	JLabel accountNumberLabel, firstNameLabel, surnameLabel, accountTypeLabel, balanceLabel, overdraftLabel;
 
 	JTextField accountNumberTextField;
