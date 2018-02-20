@@ -29,6 +29,33 @@ public class CreateBankDialog extends JFrame {
 		}
 		table.put(hash, value);
 	}
+
+	public void createAccount(String accountNumber, String surname, String firstName, String accountType){
+		boolean accNumTaken=false;
+
+		for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
+			if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
+				accNumTaken=true;
+			}
+		}
+		if(!accNumTaken){
+			BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
+			addAccountToTable(account);
+		}else{
+			JOptionPane.showMessageDialog(null, "Account Number must be unique");
+		}
+	}
+
+	public void addAccountToTable(BankAccount account){
+		int key = Integer.parseInt(account.getAccountNumber());
+
+		int hash = (key%TABLE_SIZE);
+
+		while(table.containsKey(hash)){
+			hash = hash+1;
+		}
+		table.put(hash, account);
+	}
 	// Constructor code based on that for the Create and Edit dialog classes in the Shapes exercise.
 
 	JLabel accountNumberLabel, firstNameLabel, surnameLabel, accountTypeLabel, balanceLabel, overdraftLabel;
@@ -114,30 +141,7 @@ public class CreateBankDialog extends JFrame {
 
             if (accountNumber != null && accountNumber.length()==8 && surname != null && firstName != null && accountType != null) {
                 try {
-
-                    boolean accNumTaken=false;
-
-                        for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-                             if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
-                                 accNumTaken=true;
-                             }
-                         }
-
-                    if(!accNumTaken){
-                        BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
-
-                        int key = Integer.parseInt(account.getAccountNumber());
-
-                        int hash = (key%TABLE_SIZE);
-
-                        while(table.containsKey(hash)){
-                            hash = hash+1;
-                        }
-                        table.put(hash, account);
-                    }
-                    else{
-                        JOptionPane.showMessageDialog(null, "Account Number must be unique");
-                    }
+                    createAccount(accountNumber, surname, firstName, accountType);
                 }
                 catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Number format exception");
