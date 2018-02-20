@@ -21,26 +21,23 @@ public class CreateBankDialog extends JFrame {
 
 	HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
 
-	public void put(int key, BankAccount value){
-		int hash = (key%TABLE_SIZE);
-
-		while(table.containsKey(key)){
-			hash = hash+1;
-		}
-		table.put(hash, value);
-	}
-
 	public void createAccount(String accountNumber, String surname, String firstName, String accountType){
 		boolean accNumTaken=false;
-
+		boolean maxNum=false;
 		for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
 			if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
 				accNumTaken=true;
 			}
 		}
+		if(table.size() > TABLE_SIZE-1){
+			maxNum = true;
+			JOptionPane.showMessageDialog(null, "You cannot create more accounts!");
+		}
 		if(!accNumTaken){
+			if(!maxNum){
 			BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
 			table.put(account.getAccountID(), account);
+			}
 		}else{
 			JOptionPane.showMessageDialog(null, "Account Number must be unique");
 		}
