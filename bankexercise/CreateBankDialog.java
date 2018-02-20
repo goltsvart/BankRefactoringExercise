@@ -2,13 +2,8 @@ package bankexercise;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
-import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -110,55 +105,49 @@ public class CreateBankDialog extends JFrame {
 		
 		add(buttonPanel, BorderLayout.SOUTH);
 		
-		addButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String accountNumber = accountNumberTextField.getText();
-				String surname = surnameTextField.getText();
-				String firstName = firstNameTextField.getText();
-			
-				String accountType = comboBox.getSelectedItem().toString();
+		addButton.addActionListener(e -> {
+            String accountNumber = accountNumberTextField.getText();
+            String surname = surnameTextField.getText();
+            String firstName = firstNameTextField.getText();
 
-				if (accountNumber != null && accountNumber.length()==8 && surname != null && firstName != null && accountType != null) {
-					try {
+            String accountType = comboBox.getSelectedItem().toString();
 
-						boolean accNumTaken=false;
-					 
-							for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {					
-								 if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
-									 accNumTaken=true;
-								 }
-							 }
-						
-						if(!accNumTaken){
-							BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
+            if (accountNumber != null && accountNumber.length()==8 && surname != null && firstName != null && accountType != null) {
+                try {
 
-							int key = Integer.parseInt(account.getAccountNumber());
-							
-							int hash = (key%TABLE_SIZE);
-							
-							while(table.containsKey(hash)){
-								hash = hash+1;
-							}
-							table.put(hash, account);
-						}
-						else{
-							JOptionPane.showMessageDialog(null, "Account Number must be unique");
-						}
-					}
-					catch (Exception ex) {
-						JOptionPane.showMessageDialog(null, "Number format exception");					
-					}
-				}
-				else JOptionPane.showMessageDialog(null, "Please make sure all fields have values, and Account Number is a unique 8 digit number");
-				dispose();
-			}
-		});
+                    boolean accNumTaken=false;
+
+                        for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
+                             if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
+                                 accNumTaken=true;
+                             }
+                         }
+
+                    if(!accNumTaken){
+                        BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
+
+                        int key = Integer.parseInt(account.getAccountNumber());
+
+                        int hash = (key%TABLE_SIZE);
+
+                        while(table.containsKey(hash)){
+                            hash = hash+1;
+                        }
+                        table.put(hash, account);
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(null, "Account Number must be unique");
+                    }
+                }
+                catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Number format exception");
+                }
+            }
+            else JOptionPane.showMessageDialog(null, "Please make sure all fields have values, and Account Number is a unique 8 digit number");
+            dispose();
+        });
 		
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
+		cancelButton.addActionListener(e -> dispose());
 		
 		setSize(400,800);
 		pack();
