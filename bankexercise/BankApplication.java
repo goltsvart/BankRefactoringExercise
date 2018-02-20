@@ -321,28 +321,17 @@ public class BankApplication extends JFrame {
 		
 		listAll.addActionListener(e -> {
             JFrame frame = new JFrame("TableDemo");
-            JPanel pan = new JPanel();
 
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             String col[] = {"ID","Number","Name", "Account Type", "Balance", "Overdraft"};
 
-            DefaultTableModel tableModel = new DefaultTableModel(col, 0);
-            jTable = new JTable(tableModel);
-            JScrollPane scrollPane = new JScrollPane(jTable);
-            jTable.setAutoCreateRowSorter(true);
-
-            for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-
-                Object[] objs = {entry.getValue().getAccountID(), entry.getValue().getAccountNumber(),
-                                entry.getValue().getFirstName().trim() + " " + entry.getValue().getSurname().trim(),
-                                entry.getValue().getAccountType(), entry.getValue().getBalance(),
-                                entry.getValue().getOverdraft()};
-
-                tableModel.addRow(objs);
-            }
+			DefaultTableModel tableModel = new DefaultTableModel(col, 0);
+			jTable = new JTable(tableModel);
+			JScrollPane scrollPane = new JScrollPane(jTable);
+			jTable.setAutoCreateRowSorter(true);
+			addListAllToTableModel(tableModel);
             frame.setSize(600,500);
             frame.add(scrollPane);
-            //frame.pack();
             frame.setVisible(true);
         });
 		
@@ -415,7 +404,6 @@ public class BankApplication extends JFrame {
                     String toDeposit = JOptionPane.showInputDialog("Account found, Enter Amount to Deposit: ");
                     entry.getValue().setBalance(entry.getValue().getBalance() + Double.parseDouble(toDeposit));
                     displayDetails(entry.getKey());
-                    //balanceTextField.setText(entry.getValue().getBalance()+"");
                 }
             }
             if (!found)
@@ -429,26 +417,13 @@ public class BankApplication extends JFrame {
 
             for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
 
-
                 if(accNum.equals(entry.getValue().getAccountNumber().trim())){
-
                     found = true;
-
                     if(entry.getValue().getAccountType().trim().equals("Current")){
-                        if(Double.parseDouble(toWithdraw) > entry.getValue().getBalance() + entry.getValue().getOverdraft())
-                            JOptionPane.showMessageDialog(null, "Transaction exceeds overdraft limit");
-                        else{
-                            entry.getValue().setBalance(entry.getValue().getBalance() - Double.parseDouble(toWithdraw));
-                            displayDetails(entry.getKey());
-                        }
+                        withdrawCurrent(entry, toWithdraw);
                     }
                     else if(entry.getValue().getAccountType().trim().equals("Deposit")){
-                        if(Double.parseDouble(toWithdraw) <= entry.getValue().getBalance()){
-                            entry.getValue().setBalance(entry.getValue().getBalance()-Double.parseDouble(toWithdraw));
-                            displayDetails(entry.getKey());
-                        }
-                        else
-                            JOptionPane.showMessageDialog(null, "Insufficient funds.");
+						withdrawDeposit(entry, toWithdraw);
                     }
                 }
             }
@@ -466,6 +441,33 @@ public class BankApplication extends JFrame {
             }
         });
 	}
+
+	public void withdrawCurrent(Map.Entry<Integer, BankAccount> entry, String toWithdraw){
+		if(Double.parseDouble(toWithdraw) > entry.getValue().getBalance() + entry.getValue().getOverdraft())
+			JOptionPane.showMessageDialog(null, "Transaction exceeds overdraft limit");
+		else{
+			entry.getValue().setBalance(entry.getValue().getBalance() - Double.parseDouble(toWithdraw));
+			displayDetails(entry.getKey());
+		}
+	}
+
+	public void withdrawDeposit(Map.Entry<Integer, BankAccount> entry, String toWithdraw){
+		if(Double.parseDouble(toWithdraw) <= entry.getValue().getBalance()){
+			entry.getValue().setBalance(entry.getValue().getBalance()-Double.parseDouble(toWithdraw));
+			displayDetails(entry.getKey());
+		} else JOptionPane.showMessageDialog(null, "Insufficient funds.");
+	}
+
+	public void addListAllToTableModel(DefaultTableModel tableModel){
+		for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
+			Object[] objs = {entry.getValue().getAccountID(), entry.getValue().getAccountNumber(),
+					entry.getValue().getFirstName().trim() + " " + entry.getValue().getSurname().trim(),
+					entry.getValue().getAccountType(), entry.getValue().getBalance(),
+					entry.getValue().getOverdraft()};
+			tableModel.addRow(objs);
+		}
+	}
+
 	public void setTextToFields(Map.Entry<Integer, BankAccount> entry){
 		accountIDTextField.setText(entry.getValue().getAccountID()+"");
 		accountNumberTextField.setText(entry.getValue().getAccountNumber());
@@ -505,29 +507,26 @@ public class BankApplication extends JFrame {
 	
 	public static void openFileRead(){
 		table.clear();
-			
 		fc = new JFileChooser();
 		int returnVal = fc.showOpenDialog(null);
-		 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-
-        } else {
-                }
-
-			
-		      try // open file
-		      {
-		    	  if(fc.getSelectedFile()!=null)
-		    		  input = new RandomAccessFile( fc.getSelectedFile(), "r" );
-		      } // end try
-		      catch ( IOException ioException )
-		      {
-		    	  JOptionPane.showMessageDialog(null, "File Does Not Exist.");
-		      } // end catch
-			
+		} else {
+		}
+		 openFile();
 	   } // end method openFile
-	
+
+	public static void openFile(){
+		try // open file
+		{
+			if(fc.getSelectedFile()!=null)
+				input = new RandomAccessFile( fc.getSelectedFile(), "r" );
+		} // end try
+		catch ( IOException ioException )
+		{
+			JOptionPane.showMessageDialog(null, "File Does Not Exist.");
+		} // end catch
+	}
 	static String fileToSaveAs = "";
 	
 	public static void openFileWrite(){
@@ -552,24 +551,26 @@ public class BankApplication extends JFrame {
 		 int returnVal = fc.showSaveDialog(null);
          if (returnVal == JFileChooser.APPROVE_OPTION) {
              File file = fc.getSelectedFile();
-           
              fileToSaveAs = file.getName();
              JOptionPane.showMessageDialog(null, "Accounts saved to " + file.getName());
          } else {
              JOptionPane.showMessageDialog(null, "Save cancelled by user");
          }
-	         try {
-	        	 if(fc.getSelectedFile()==null){
-	        		 JOptionPane.showMessageDialog(null, "Cancelled");
-	        	 }
-	        	 else
-	        		 output = new RandomAccessFile(fc.getSelectedFile(), "rw" );
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		  validateSaveToFileAs();
 	   }
-	
+
+	   public static void validateSaveToFileAs(){
+		   try {
+			   if(fc.getSelectedFile()==null){
+				   JOptionPane.showMessageDialog(null, "Cancelled");
+			   }
+			   else
+				   output = new RandomAccessFile(fc.getSelectedFile(), "rw" );
+		   } catch (FileNotFoundException e) {
+			   // TODO Auto-generated catch block
+			   e.printStackTrace();
+		   }
+	   }
 	public static void closeFile() 
 	   {
 	      try // close file and exit
@@ -582,45 +583,41 @@ public class BankApplication extends JFrame {
 	    	  JOptionPane.showMessageDialog(null, "Error closing file.");//System.exit( 1 );
 	      } // end catch
 	   } // end method closeFile
-	
-	public static void readRecords()
-	   {
+
+	public static void readRecords() {
 	      RandomAccessBankAccount record = new RandomAccessBankAccount();
-	      try // read a record and display
-	      {
-	         while ( true )
-	         {
-	            do
-	            {
-	            	if(input!=null)
-	            		record.read( input );
-	            } while ( record.getAccountID() == 0 );
+		   while ( true )
+           {
+               readRecord(record);
 
-	            BankAccount ba = new BankAccount(record.getAccountNumber(), record.getFirstName(),
-	                    record.getSurname(), record.getAccountType(), record.getBalance(), record.getOverdraft());
-	            Integer key = Integer.valueOf(ba.getAccountNumber().trim());
-				int hash = (key%TABLE_SIZE);
-
-				while(table.containsKey(hash)){
-			
-					hash = hash+1;
+           } // end while
+	}
+	public static void readRecord(RandomAccessBankAccount record){
+		do {
+			if(input!=null)
+				try {
+					record.read( input );
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-	            table.put(hash, ba);
-	         } // end while
-	      } // end try
-	      catch ( EOFException eofException ) // close file
-	      {
-	         return; // end of file was reached
-	      } // end catch
-	      catch ( IOException ioException )
-	      {
-	    	  JOptionPane.showMessageDialog(null, "Error reading file.");
-	         System.exit( 1 );
-	      } // end catch
-	   }
+		} while ( record.getAccountID() == 0 );
+
+		displayRecords(record);
+	}
+	public static void displayRecords(RandomAccessBankAccount record){
+		BankAccount ba = new BankAccount(record.getAccountNumber(), record.getFirstName(),
+				record.getSurname(), record.getAccountType(), record.getBalance(), record.getOverdraft());
+		Integer key = Integer.valueOf(ba.getAccountNumber().trim());
+		int hash = (key%TABLE_SIZE);
+
+		while(table.containsKey(hash)){
+
+			hash = hash+1;
+		}
+		table.put(hash, ba);
+	}
 	
-public static void saveToFile(){
+	public static void saveToFile(){
 
 		RandomAccessBankAccount record = new RandomAccessBankAccount();
 
@@ -639,8 +636,7 @@ public static void saveToFile(){
 						u.printStackTrace();
 					}
 			   }
-			   
-			}
+		  }
 	}
 
 	public static void writeFile(){
