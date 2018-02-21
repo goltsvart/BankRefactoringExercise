@@ -13,13 +13,13 @@ public class RandomAccessBankAccount extends BankAccount {
 	}
 	
 	public void read(RandomAccessFile file) throws IOException{
-		setAccountID(file.readInt());
-		setAccountNumber(readName(file));
-		setFirstName(readName(file));
-		setSurname(readName(file));
-		setAccountType(readName(file));
-		setBalance(file.readDouble());
-		setOverdraft(file.readDouble());
+			setAccountID(Integer.parseInt(readName(file).trim()));
+			setAccountNumber(readName(file));
+			setFirstName(readName(file));
+			setSurname(readName(file));
+			setAccountType(readName(file));
+			setBalance(file.readDouble());
+			setOverdraft(file.readDouble());
 	}
 	
 	private String readName(RandomAccessFile file) throws IOException{
@@ -32,7 +32,7 @@ public class RandomAccessBankAccount extends BankAccount {
 	}
 	
 	public void write(RandomAccessFile file) throws IOException{
-		file.writeInt(getAccountID());
+		writeName(file, String.valueOf(getAccountID()).trim());
 		writeName(file, getAccountNumber());
 		writeName(file, getFirstName());
 		writeName(file, getSurname());
@@ -40,10 +40,9 @@ public class RandomAccessBankAccount extends BankAccount {
 		file.writeDouble(getBalance());
 		file.writeDouble(getOverdraft());
 	}
-	
+
 	private void writeName(RandomAccessFile file, String name) throws IOException{
 		StringBuffer buffer = null;
-		
 		if(name!=null)
 			buffer = new StringBuffer(name);
 		else
