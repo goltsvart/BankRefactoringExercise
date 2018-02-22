@@ -30,7 +30,6 @@ import static bankexercise.FileSystem.writeFile;
 public class BankApplication extends JFrame {
 
     static HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
-    private final static int TABLE_SIZE = 29;
     JMenuBar menuBar;
     JMenu navigateMenu, recordsMenu, transactionsMenu, fileMenu, exitMenu;
     JMenuItem nextItem, prevItem, firstItem, lastItem, findByAccount, findBySurname, listAll;

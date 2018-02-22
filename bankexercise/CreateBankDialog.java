@@ -18,48 +18,24 @@ import net.miginfocom.swing.MigLayout;
 public class CreateBankDialog extends JFrame {
 
 	private final static int TABLE_SIZE = 29;
-
-	HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
-
-	public void createAccount(String accountNumber, String surname, String firstName, String accountType){
-		boolean accNumTaken=false;
-		boolean maxNum=false;
-		for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-			if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
-				accNumTaken=true;
-			}
-		}
-		if(table.size() > TABLE_SIZE-1){
-			maxNum = true;
-			JOptionPane.showMessageDialog(null, "You cannot create more accounts!");
-		}
-		if(!accNumTaken){
-			if(!maxNum){
-			BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
-			table.put(account.getAccountID(), account);
-			}
-		}else{
-			JOptionPane.showMessageDialog(null, "Account Number must be unique");
-		}
-	}
-
-	// Constructor code based on that for the Create and Edit dialog classes in the Shapes exercise.
 	JLabel accountNumberLabel, firstNameLabel, surnameLabel, accountTypeLabel, balanceLabel, overdraftLabel;
 
 	JTextField accountNumberTextField;
-	final JTextField firstNameTextField, surnameTextField, accountTypeTextField, balanceTextField, overdraftTextField;
-	
-	CreateBankDialog(HashMap accounts) {
-		
-		super("Add Bank Details");
-		
-		table = accounts;
-		setLayout(new BorderLayout());
-		JPanel dataPanel = new JPanel(new MigLayout());
-		String[] comboTypes = {"Current", "Deposit"};
-		
-		final JComboBox comboBox = new JComboBox(comboTypes);
+	JTextField firstNameTextField, surnameTextField, accountTypeTextField, balanceTextField, overdraftTextField;
 
+	CreateBankDialog(HashMap accounts) {
+
+		super("Add Bank Details");
+
+		BankApplication.table = accounts;
+		setLayout(new BorderLayout());
+		initComponents();
+	}
+
+	public void initComponents(){
+		String[] comboTypes = {"Current", "Deposit"};
+		final JComboBox comboBox = new JComboBox(comboTypes);
+		JPanel dataPanel = new JPanel(new MigLayout());
 		accountNumberLabel = new JLabel("Photograph file name: ");
 		accountNumberTextField = new JTextField(15);
 		
@@ -108,16 +84,16 @@ public class CreateBankDialog extends JFrame {
 		dataPanel.add(overdraftTextField, "growx, pushx, wrap");
 		
 		add(dataPanel, BorderLayout.CENTER);
-		
+
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		JButton addButton = new JButton("Add");
 		JButton cancelButton = new JButton("Cancel");
-		
+
 		buttonPanel.add(addButton);
 		buttonPanel.add(cancelButton);
-		
+
 		add(buttonPanel, BorderLayout.SOUTH);
-		
+
 		addButton.addActionListener(e -> {
             String accountNumber = accountNumberTextField.getText();
             String surname = surnameTextField.getText();
@@ -136,12 +112,33 @@ public class CreateBankDialog extends JFrame {
             else JOptionPane.showMessageDialog(null, "Please make sure all fields have values, and Account Number is a unique 8 digit number");
             dispose();
         });
-		
+
 		cancelButton.addActionListener(e -> dispose());
-		
+
 		setSize(400,800);
 		pack();
 		setVisible(true);
+	}
 
+	public void createAccount(String accountNumber, String surname, String firstName, String accountType){
+		boolean accNumTaken=false;
+		boolean maxNum=false;
+		for (Map.Entry<Integer, BankAccount> entry : BankApplication.table.entrySet()) {
+			if(entry.getValue().getAccountNumber().trim().equals(accountNumberTextField.getText())){
+				accNumTaken=true;
+			}
+		}
+		if(BankApplication.table.size() > TABLE_SIZE-1){
+			maxNum = true;
+			JOptionPane.showMessageDialog(null, "You cannot create more accounts!");
+		}
+		if(!accNumTaken){
+			if(!maxNum){
+				BankAccount account = new BankAccount(accountNumber, surname, firstName, accountType, 0.0, 0.0);
+				BankApplication.table.put(account.getAccountID(), account);
+			}
+		}else{
+			JOptionPane.showMessageDialog(null, "Account Number must be unique");
+		}
 	}
 }
