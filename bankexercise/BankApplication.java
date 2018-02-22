@@ -40,14 +40,14 @@ public class BankApplication extends JFrame {
     JMenuItem closeApp;
     JButton firstItemButton, lastItemButton, nextItemButton, prevItemButton;
     JLabel accountIDLabel, accountNumberLabel, firstNameLabel, surnameLabel, accountTypeLabel, balanceLabel, overdraftLabel;
-    JTextField accountIDTextField, accountNumberTextField, firstNameTextField, surnameTextField, accountTypeTextField, balanceTextField, overdraftTextField;
+    static JTextField accountIDTextField, accountNumberTextField, firstNameTextField, surnameTextField, accountTypeTextField, balanceTextField, overdraftTextField;
     static JFileChooser fc;
     JTable jTable;
     double interestRate;
 
-    int currentItem = 1;
+    static int currentItem = 1;
 
-    boolean openValues;
+    static boolean openValues;
 
     public BankApplication() {
 
@@ -211,7 +211,7 @@ public class BankApplication extends JFrame {
             while (!table.containsKey(currentItem)) {
                 currentItem++;
             }
-            displayDetails(currentItem);
+            Util.displayDetails(currentItem);
         });
 
         save.addActionListener(e -> writeFile());
@@ -231,29 +231,29 @@ public class BankApplication extends JFrame {
 
     public void navigateButtonsFunctions(){
         ActionListener first = e -> {
-            saveOpenValues();
+            Util.saveOpenValues();
             currentItem = 1;
-            displayDetails(currentItem);
+            Util.displayDetails(currentItem);
         };
 
         ActionListener next1 = e -> {
             if (currentItem != table.size()) {
-                saveOpenValues();
+                Util.saveOpenValues();
                 currentItem++;
-                displayDetails(currentItem); }
+                Util.displayDetails(currentItem); }
         };
 
         ActionListener prev = e -> {
             if (currentItem != 1) {
-                saveOpenValues();
+                Util.saveOpenValues();
                 currentItem--;
-                displayDetails(currentItem); }
+                Util.displayDetails(currentItem); }
         };
 
         ActionListener last = e -> {
-            saveOpenValues();
+            Util.saveOpenValues();
             currentItem = table.size();
-            displayDetails(currentItem);
+            Util.displayDetails(currentItem);
         };
 
         nextItemButton.addActionListener(next1);
@@ -280,7 +280,7 @@ public class BankApplication extends JFrame {
             jTable = new JTable(tableModel);
             JScrollPane scrollPane = new JScrollPane(jTable);
             jTable.setAutoCreateRowSorter(true);
-            addListAllToTableModel(tableModel);
+            Util.addListAllToTableModel(tableModel);
             frame.setSize(600, 500);
             frame.add(scrollPane);
             frame.setVisible(true);
@@ -293,7 +293,7 @@ public class BankApplication extends JFrame {
 
                 if (sName.equalsIgnoreCase((entry.getValue().getSurname().trim()))) {
                     found = true;
-                    setTextToFields(entry);
+                    Util.setTextToFields(entry);
                 }
             }
             if (found)
@@ -310,7 +310,7 @@ public class BankApplication extends JFrame {
 
                 if (accNum.equals(entry.getValue().getAccountNumber().trim())) {
                     found = true;
-                    setTextToFields(entry);
+                    Util.setTextToFields(entry);
                 }
             }
             if (found)
@@ -330,7 +330,7 @@ public class BankApplication extends JFrame {
             while (!table.containsKey(currentItem)) {
                 currentItem++;
             }
-            displayDetails(currentItem);
+            Util.displayDetails(currentItem);
         });
 
         createItem.addActionListener(e -> new CreateBankDialog(table));
@@ -367,7 +367,7 @@ public class BankApplication extends JFrame {
                     found = true;
                     String toDeposit = JOptionPane.showInputDialog("Account found, Enter Amount to Deposit: ");
                     entry.getValue().setBalance(entry.getValue().getBalance() + Double.parseDouble(toDeposit));
-                    displayDetails(entry.getKey());
+                    Util.displayDetails(entry.getKey());
                 }
             }
             if (!found)
@@ -384,9 +384,9 @@ public class BankApplication extends JFrame {
                 if (accNum.equals(entry.getValue().getAccountNumber().trim())) {
                     found = true;
                     if (entry.getValue().getAccountType().trim().equals("Current")) {
-                        withdrawCurrent(entry, toWithdraw);
+                        Util.withdrawCurrent(entry, toWithdraw);
                     } else if (entry.getValue().getAccountType().trim().equals("Deposit")) {
-                        withdrawDeposit(entry, toWithdraw);
+                        Util.withdrawDeposit(entry, toWithdraw);
                     }
                 }
             }
@@ -398,70 +398,10 @@ public class BankApplication extends JFrame {
                     double equation = 1 + ((interestRate) / 100);
                     entry.getValue().setBalance(entry.getValue().getBalance() * equation);
                     JOptionPane.showMessageDialog(null, "Balances Updated");
-                    displayDetails(entry.getKey());
+                    Util.displayDetails(entry.getKey());
                 }
             }
         });
-    }
-
-    public void withdrawCurrent(Map.Entry<Integer, BankAccount> entry, String toWithdraw) {
-        if (Double.parseDouble(toWithdraw) > entry.getValue().getBalance() + entry.getValue().getOverdraft())
-            JOptionPane.showMessageDialog(null, "Transaction exceeds overdraft limit");
-        else {
-            entry.getValue().setBalance(entry.getValue().getBalance() - Double.parseDouble(toWithdraw));
-            displayDetails(entry.getKey());
-        }
-    }
-
-    public void withdrawDeposit(Map.Entry<Integer, BankAccount> entry, String toWithdraw) {
-        if (Double.parseDouble(toWithdraw) <= entry.getValue().getBalance()) {
-            entry.getValue().setBalance(entry.getValue().getBalance() - Double.parseDouble(toWithdraw));
-            displayDetails(entry.getKey());
-        } else JOptionPane.showMessageDialog(null, "Insufficient funds.");
-    }
-
-    public void addListAllToTableModel(DefaultTableModel tableModel) {
-        for (Map.Entry<Integer, BankAccount> entry : table.entrySet()) {
-            Object[] objs = {entry.getValue().getAccountID(), entry.getValue().getAccountNumber(),
-                    entry.getValue().getFirstName().trim() + " " + entry.getValue().getSurname().trim(),
-                    entry.getValue().getAccountType(), entry.getValue().getBalance(),
-                    entry.getValue().getOverdraft()};
-            tableModel.addRow(objs);
-        }
-    }
-
-    public void setTextToFields(Map.Entry<Integer, BankAccount> entry) {
-        accountIDTextField.setText(entry.getValue().getAccountID() + "");
-        accountNumberTextField.setText(entry.getValue().getAccountNumber());
-        surnameTextField.setText(entry.getValue().getSurname());
-        firstNameTextField.setText(entry.getValue().getFirstName());
-        accountTypeTextField.setText(entry.getValue().getAccountType());
-        balanceTextField.setText(entry.getValue().getBalance() + "");
-        overdraftTextField.setText(entry.getValue().getOverdraft() + "");
-    }
-
-    public void saveOpenValues() {
-        if (openValues) {
-            surnameTextField.setEditable(false);
-            firstNameTextField.setEditable(false);
-
-            table.get(currentItem).setSurname(surnameTextField.getText());
-            table.get(currentItem).setFirstName(firstNameTextField.getText());
-        }
-    }
-
-    public void displayDetails(int currentItem) {
-
-        accountIDTextField.setText(table.get(currentItem).getAccountID() + "");
-        accountNumberTextField.setText(table.get(currentItem).getAccountNumber());
-        surnameTextField.setText(table.get(currentItem).getSurname());
-        firstNameTextField.setText(table.get(currentItem).getFirstName());
-        accountTypeTextField.setText(table.get(currentItem).getAccountType());
-        balanceTextField.setText(table.get(currentItem).getBalance() + "");
-        if (accountTypeTextField.getText().trim().equals("Current"))
-            overdraftTextField.setText(table.get(currentItem).getOverdraft() + "");
-        else
-            overdraftTextField.setText("Only applies to current accs");
     }
 
     public static void main(String[] args) {
