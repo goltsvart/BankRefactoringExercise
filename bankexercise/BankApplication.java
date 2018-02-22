@@ -5,31 +5,15 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import static bankexercise.FileSystem.*;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
 
-import static bankexercise.FileSystem.readFile;
-import static bankexercise.FileSystem.saveFileAs;
-import static bankexercise.FileSystem.writeFile;
-
 public class BankApplication extends JFrame {
 
-    static HashMap<Integer, BankAccount> table = new HashMap<Integer, BankAccount>();
+    static HashMap<Integer, BankAccount> table = new HashMap<>();
     JMenuBar menuBar;
     JMenu navigateMenu, recordsMenu, transactionsMenu, fileMenu, exitMenu;
     JMenuItem nextItem, prevItem, firstItem, lastItem, findByAccount, findBySurname, listAll;
